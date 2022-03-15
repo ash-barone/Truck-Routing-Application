@@ -40,7 +40,7 @@ class Truck:
                     "%H:%M:%S")) + ". Still in transit. "
 
     def load_packages(self, truck_num, package_list):
-        # if self.departure_time <= set_time: # TODO this is what breaks it with set_time as a param also
+        # if self.departure_time <= set_time:
         for i in range(len(package_list)):
             package = package_list[i]
             '''package.delivery_status = "Loaded on truck " + str(truck_num) + " at " + str(
