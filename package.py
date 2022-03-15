@@ -120,10 +120,10 @@ class Package:
                 else:
                     notes = package[7]
                 if "Delayed" in package[7]:
-                    status = "Delayed. Arriving at hub at: " + \
+                    status = "Delayed. Arriving at hub at " + \
                              str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
                 else:
-                    status = "Arriving at hub at : " + \
+                    status = "Arrived at hub at " + \
                              str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
 
                 p = Package(package_id, address, city, state, package_zip, deadline, mass, notes, status)
