@@ -24,16 +24,23 @@ class Truck:
     def get_miles_traveled(self):
         return self.miles_traveled
 
-    def load_packages(self, truck_num, package_list):
-        for i in range(len(package_list)):
-            package = package_list[i]
-            package.delivery_status = "In Transit " + str(self.departure_time)
-            self.loaded_packages.append(package)
-            '''print("Package Id when Loaded: ")
-            print(package.get_package_id())'''
+    def clear_packages(self):
+        self.loaded_packages.clear()
+        # print("CLEARED PACKAGES")
 
-            # print("Packages Loaded on Truck:")
-            # print("Package: {}".format(package.__str__()))
+    def load_packages(self, truck_num, package_list, set_time):
+        if self.departure_time <= set_time:
+            for i in range(len(package_list)):
+                package = package_list[i]
+                package.delivery_status = "Loaded on truck " + str(truck_num) + " at " + str(
+                    self.departure_time.strftime(
+                        "%H:%M:%S")) + ". Still in transit. "
+                self.loaded_packages.append(package)
+                '''print("Package Id when Loaded: ")
+                print(package.get_package_id())'''
+
+                # print("Packages Loaded on Truck:")
+                # print("Package: {}".format(package.__str__()))
 
     def deliver_packages(self, set_time, optimized_list, distance_list):
         self.curr_time = self.departure_time
@@ -70,7 +77,8 @@ class Truck:
                     count = 0
                     for p in self.loaded_packages:
 
-                        if p.get_package_id() == package_delivered_id and ("10:30" in p.get_delivery_deadline() or "9:00" in p.get_delivery_deadline()):
+                        if p.get_package_id() == package_delivered_id and ("10:30" in p.get_delivery_deadline() or
+                                                                           "9:00" in p.get_delivery_deadline()):
 
                             self.curr_location = p.get_address()
                             p.set_delivery_status(
@@ -96,6 +104,8 @@ class Truck:
                             '''for pa in delivered_packages:
                                 print("Delivered packages: ")
                                 print(pa)'''
+        if len(self.loaded_packages) == 0:
+            self.return_truck()
 
     def return_truck(self):
         hub = "4001 South 700 East"
@@ -104,4 +114,3 @@ class Truck:
         self.miles_traveled += dist_to_hub  # add distance to the miles traveled
         time_elapsed_in_seconds = ((dist_to_hub / 18.0) * 60.0) * 60.0
         self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
-

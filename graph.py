@@ -30,7 +30,7 @@ class Graph:
         # print(dict)
         # pprint.pprint(dict)
         # print("vertexes " + str(curr_vertex) + " , " + str(next_vertex))
-        temp_v = 99.99
+        temp_v = 0
         for k, v in dict:
             # print("k[0]"+ str(k[0])+ " curr vertex "+ str(curr_vertex))
             if k[0] == curr_vertex:

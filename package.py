@@ -7,6 +7,7 @@ truck1_packages = []
 truck2_packages_trip1 = []
 truck2_packages_trip2 = []
 truck3_packages = []
+my_hash_table = HashTable()
 
 
 class Package:
@@ -88,6 +89,10 @@ class Package:
             package_data = csv.reader(packages, delimiter=',')
 
             # truck packages lists
+            truck1_packages.clear()
+            truck2_packages_trip1.clear()
+            truck3_packages.clear()
+            truck2_packages_trip2.clear()
 
             next(package_data)  # skip header
             for package in package_data:
@@ -115,10 +120,10 @@ class Package:
                 else:
                     notes = package[7]
                 if "Delayed" in package[7]:
-                    status = "Delayed. Hub arrival at: " + \
+                    status = "Delayed. Arriving at hub at: " + \
                              str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
                 else:
-                    status = "At hub. Arrived at hub: " + \
+                    status = "Arriving at hub at : " + \
                              str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
 
                 p = Package(package_id, address, city, state, package_zip, deadline, mass, notes, status)
@@ -167,7 +172,7 @@ class Package:
                         # print("Truck 3 not in other lists: " + str(package_id))
                     elif len(truck2_packages_trip1) < 8:
                         truck2_packages_trip2.append(p)
-        print("Number of packages in list: ")
+        '''print("Number of packages in list: ")
         print("truck 1: ")
         print(len(truck1_packages))
         print("truck 2 trip 1: ")
@@ -175,11 +180,11 @@ class Package:
         print("truck 2 trip 2: ")
         print(len(truck2_packages_trip2))
         print("truck 3: ")
-        print(len(truck3_packages))
+        print(len(truck3_packages))'''
 
 
 def create_package_lists():
-    my_hash_table = HashTable()
+    # my_hash_table = HashTable()
     Package.load_package_data("packages.csv", my_hash_table)
 
     '''print("Packages from Hashtable:")
