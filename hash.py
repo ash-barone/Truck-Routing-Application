@@ -49,3 +49,6 @@ class HashTable:
             # print (key_value)
             if key_value[0] == key:
                 bucket_list.remove([key_value[0], key_value[1]])
+
+    def clear(self):
+        del self

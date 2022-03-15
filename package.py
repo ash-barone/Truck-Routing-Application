@@ -161,23 +161,23 @@ class Package:
 
                 elif package not in truck1_packages and package not in truck2_packages_trip1 and \
                         package and package not in truck2_packages_trip2 not in truck3_packages:
-                    if len(truck1_packages) < 7:
-                        truck1_packages.append(p)
-                        # print("Truck 1 not in other lists: " + str(package_id))
-                    elif len(truck2_packages_trip2) < 8:
+                    if len(truck2_packages_trip2) < 10:
                         truck2_packages_trip2.append(p)
                         # print("Truck 2 not in other lists: " + str(package_id))
+                    elif len(truck1_packages) < 10:
+                        truck1_packages.append(p)
+                    elif len(truck2_packages_trip1) < 16:
+                        truck2_packages_trip1.append(p)
                     elif len(truck3_packages) < 16:
                         truck3_packages.append(p)
                         # print("Truck 3 not in other lists: " + str(package_id))
-                    elif len(truck2_packages_trip1) < 8:
-                        truck2_packages_trip2.append(p)
-        '''print("Number of packages in list: ")
-        print("truck 1: ")
+
+        '''print("Number of packages on each truck: ")
+        print("Truck 1: ")
         print(len(truck1_packages))
-        print("truck 2 trip 1: ")
+        print("Truck 2 Trip 1: ")
         print(len(truck2_packages_trip1))
-        print("truck 2 trip 2: ")
+        print("Truck 2 Trip 2: ")
         print(len(truck2_packages_trip2))
         print("truck 3: ")
         print(len(truck3_packages))'''

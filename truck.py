@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 
+from package import my_hash_table
 from util import distance_graph
 
 
@@ -13,6 +14,7 @@ class Truck:
         self.miles_traveled = 0
         self.departure_time = departure_time
         self.curr_time = datetime.now().strftime("%H:%M:%S")
+        # self.delivered_packages = []
 
     def __str__(self):
         return "Truck Number: %s, Packages Loaded: %s, Current Location: %s, Miles Traveled: %s, Current Time: %s" % (
@@ -24,23 +26,32 @@ class Truck:
     def get_miles_traveled(self):
         return self.miles_traveled
 
+    def get_delivered_packages(self):
+        return self.delivered_packages
+
     def clear_packages(self):
         self.loaded_packages.clear()
         # print("CLEARED PACKAGES")
 
-    def load_packages(self, truck_num, package_list, set_time):
-        if self.departure_time <= set_time:
-            for i in range(len(package_list)):
-                package = package_list[i]
-                package.delivery_status = "Loaded on truck " + str(truck_num) + " at " + str(
+    def update_deliver_status(self):
+        for p in self.loaded_packages:
+            p.delivery_status = "Loaded on truck " + str(self.truck_num) + " at " + str(
+                self.departure_time.strftime(
+                    "%H:%M:%S")) + ". Still in transit. "
+
+    def load_packages(self, truck_num, package_list):
+        # if self.departure_time <= set_time: # TODO this is what breaks it with set_time as a param also
+        for i in range(len(package_list)):
+            package = package_list[i]
+            '''package.delivery_status = "Loaded on truck " + str(truck_num) + " at " + str(
                     self.departure_time.strftime(
-                        "%H:%M:%S")) + ". Still in transit. "
-                self.loaded_packages.append(package)
-                '''print("Package Id when Loaded: ")
+                        "%H:%M:%S")) + ". Still in transit. "'''
+            self.loaded_packages.append(package)
+            '''print("Package Id when Loaded: ")
                 print(package.get_package_id())'''
 
-                # print("Packages Loaded on Truck:")
-                # print("Package: {}".format(package.__str__()))
+            # print("Packages Loaded on Truck:")
+            # print("Package: {}".format(package.__str__()))
 
     def deliver_packages(self, set_time, optimized_list, distance_list):
         self.curr_time = self.departure_time
@@ -51,6 +62,7 @@ class Truck:
         '''print("Distance List: ")
         print(distance_list)'''
         delivered_packages = []
+        self.update_deliver_status()
         for i in range(len(distance_list) - 1):  # run through distance list
 
             if self.curr_time < set_time:  # set time is time you want to see statuses at and temp time is the loop
@@ -86,8 +98,9 @@ class Truck:
                                     self.curr_time.strftime("%H:%M:%S")))  # but the right time from above
                             self.loaded_packages.remove(p)
                             delivered_packages.append(p)
-                            print("Package being delivered: ")
+                            print("Package delivered: ")
                             print(p)
+                            # my_hash_table.update(p.get_package_id(), p)
                             '''for pa in delivered_packages:
                                 print("Delivered packages: ")
                                 print(pa)'''
@@ -99,13 +112,20 @@ class Truck:
                                     self.curr_time.strftime("%H:%M:%S")))  # but the right time from above
                             self.loaded_packages.remove(p)
                             delivered_packages.append(p)
-                            print("Package being delivered: ")
+
+                            # update hash table
+                            my_hash_table.update(p.get_package_id(), p)
+                            print("Package delivered: ")
                             print(p)
                             '''for pa in delivered_packages:
                                 print("Delivered packages: ")
                                 print(pa)'''
         if len(self.loaded_packages) == 0:
             self.return_truck()
+        else:
+            print("\nRemaining packages on truck " + str(self.truck_num) + ": ")
+            for p in self.loaded_packages:
+                print(p)
 
     def return_truck(self):
         hub = "4001 South 700 East"
