@@ -2,12 +2,13 @@ import csv
 from datetime import datetime
 
 from hash import HashTable
+from main import truck1, truck2, truck3, hash_table
 
 truck1_packages = []
 truck2_packages_trip1 = []
 truck2_packages_trip2 = []
 truck3_packages = []
-my_hash_table = HashTable()
+# hash_table = HashTable()
 
 
 class Package:
@@ -177,6 +178,10 @@ class Package:
         Reads packages.csv and adds each row to the hash table as a package object. After adding the package object,
         that package is then sorted into a truck packages list manually for specific packages or depending on 
         certain attributes such as delivery deadline or special notes.
+        This method utilizes a greedy type algorithm to sort all remaining packages that have not been manually added.
+        The algorithm uses the capacity of the truck to determine whether it is optimal at that given moment to
+        add a package to the next truck in line. Each iteration, a package is added to some truck and then not touched
+        again.
         Space-time complexity of O(n).
         :param file_name: The name of the csv file to read
         :param hash_table: The hash table to fill with package objects
@@ -188,7 +193,7 @@ class Package:
             truck1_packages.clear()
             truck2_packages_trip1.clear()
             truck3_packages.clear()
-            truck2_packages_trip2.clear()
+            # truck2_packages_trip2.clear()
 
             next(package_data)  # skip top line
             # cycle through each package in the package data as read by the csv reader
@@ -229,18 +234,18 @@ class Package:
                 # insert it into the hash table
                 hash_table.insert(package_id, p)
 
-                # manually add package 9 to truck 2 trip 2
+                # manually add package 9 to truck 3
                 if package_id == 9:
-                    truck2_packages_trip2.append(p)
+                    truck3_packages.append(p)
                     # print("Truck 2 package 9: " + str(package_id))
 
                 elif "truck 2" in notes:
-                    truck2_packages_trip2.append(p)
+                    truck2_packages_trip1.append(p)
                     # print("Truck 2 only truck 2: " + str(package_id))
 
                 elif "Delayed" in status:
                     if "EOD" in deadline:
-                        truck2_packages_trip2.append(p)
+                        truck3_packages.append(p)
                     else:
                         truck2_packages_trip1.append(p)
                     # print("Truck 2 delayed: " + str(package_id))
@@ -252,7 +257,7 @@ class Package:
 
                 # add packages with deadlines
                 elif "EOD" not in deadline and package not in truck1_packages and package not in truck2_packages_trip1 \
-                        and package not in truck2_packages_trip2 and package not in truck3_packages:
+                        and package not in truck3_packages:
                     if len(truck1_packages) < 16:
                         truck1_packages.append(p)
                         # print("Truck 1 eod not in deadline: " + str(package_id))
@@ -262,34 +267,45 @@ class Package:
 
                 # add all the other packages
                 elif package not in truck1_packages and package not in truck2_packages_trip1 and \
-                        package and package not in truck2_packages_trip2 not in truck3_packages:
-                    if len(truck2_packages_trip2) < 10:
-                        truck2_packages_trip2.append(p)
+                        package not in truck3_packages:
+                    if len(truck3_packages) < 11:
+                        truck3_packages.append(p)
                         # print("Truck 2 not in other lists: " + str(package_id))
                     elif len(truck1_packages) < 10:
                         truck1_packages.append(p)
                     elif len(truck2_packages_trip1) < 16:
                         truck2_packages_trip1.append(p)
-                    elif len(truck3_packages) < 16:
-                        truck3_packages.append(p)
+                    '''elif len(truck3_packages) < 16:
+                        truck3_packages.append(p)'''
                         # print("Truck 3 not in other lists: " + str(package_id))
 
-        print("Number of packages on each truck: ")
+        '''print("Number of packages on each truck: ")
         print("Truck 1: ")
         print(len(truck1_packages))
-        print("Truck 2 Trip 1: ")
+        print("Truck 2: ")
         print(len(truck2_packages_trip1))
-        print("Truck 2 Trip 2: ")
-        print(len(truck2_packages_trip2))
         print("truck 3: ")
-        print(len(truck3_packages))
+        print(len(truck3_packages))'''
 
 
 def get_all_packages():
     package_list = []
-    for i in range(len(my_hash_table.table) + 1):
-        package = my_hash_table.search(i + 1)
-        package_list.append(package)
+    '''for i in range(len(hash_table.table) + 1):
+        package = hash_table.search(i + 1)
+        package_list.append(package)'''
+
+    for dp1 in truck1.get_delivered_packages():
+        package_list.append(dp1)
+    for lp1 in truck1.get_loaded_packages():
+        package_list.append(lp1)
+    for dp2 in truck2.get_delivered_packages():
+        package_list.append(dp2)
+    for lp2 in truck2.get_loaded_packages():
+        package_list.append(lp2)
+    for dp3 in truck3.get_delivered_packages():
+        package_list.append(dp3)
+    for lp3 in truck3.get_loaded_packages():
+        package_list.append(lp3)
     return package_list
 
 
@@ -298,10 +314,11 @@ def create_package_lists():
     Calls the load package data method to create the hash table of packages.
     """
     # my_hash_table = HashTable()
-    Package.load_package_data("packages.csv", my_hash_table)
+    Package.load_package_data("packages.csv",
+                              hash_table)
 
-    '''print("Packages from Hashtable:")
+    print("Packages from Hashtable:")
     # Fetch data from Hash Table
-    for i in range(len(my_hash_table.table) + 1):
-        print("Package: {}".format(my_hash_table.search(i + 1)))
-'''
+    for i in range(len(hash_table.table) + 1):
+        print("Package: {}".format(hash_table.search(i + 1)))
+

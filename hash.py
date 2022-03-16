@@ -60,7 +60,7 @@ class HashTable:
         # print(bucket_list)
 
         for key_value in bucket_list:
-            # print(key_value)
+            print("key_value: " + str(key_value))
             if key_value[0] == key:
                 return key_value[1]
         return None
