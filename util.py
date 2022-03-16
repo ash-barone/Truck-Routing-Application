@@ -1,5 +1,4 @@
 import csv
-import sys
 
 import util
 from graph import Graph
@@ -8,11 +7,16 @@ distance_graph = Graph()
 
 
 def load_address_data(file_name, graph):
+    """
+    Reads distances.csv and adds each row as a vertex(address) to the graph.
+    Space-time complexity of O(n^2).
+    :param file_name: The csv file to read
+    :param graph: The graph to add the vertices(addresses) to
+    """
     with open(file_name) as distances:
         distance_data = csv.reader(distances, delimiter=',')
         address_line = next(distance_data)
         # print("address line: " + str(address_line))
-        other_graph = graph
 
         for row in distance_data:
             start_address = row[0]
@@ -31,73 +35,97 @@ def load_address_data(file_name, graph):
 
 
 def create_address_graph():
-    # my_graph = Graph()
+    """
+    Calls the load address data method to create the graph of addresses
+    """
     util.load_address_data("distances.csv", distance_graph)
 
 
-def find_shortest_distance(start, package_list):
-    # print(" pls do something")
+def find_shortest_distance(truck_location, package_list):
+    """
+    Greedy algorithm sorting method used to determine the order in which to deliver the packages. The algorithm uses an
+    outer for loop which keeps track of where to begin looping through the list of packages and an inner for loop which
+    loops through that list of packages using the start point from the outer loop. The algorithm then compares distances
+    to move the shortest distance to the top of the list. The greedy algorithm provides an in-the-moment optimized list
+    since it only considers what is optimal at the exact moment it is comparing distances.
+    Time complexity of O(n^2) since there are two for loops running through n times. The algorithm has a space
+    complexity of O(n) since only the inner for loop uses an n amount of space with the outer loop only keeping the
+    sort's place in the list.
+
+    :param truck_location: The location of the truck
+    :param package_list: The list of packages
+    :return:
+    """
+    curr_location = truck_location
+    next_location = None
     starting_location = "4001 South 700 East"
     '''print("Starting Location BEGIN: ")
     print(starting_location)'''
-    optimized_list = []
+    shortest_distance_list = []
     distance_list = []
     total_distance = 0
-    current_location = start
-    next_delivery = None
 
-    # Time-complexity of O(n^2)
-    # Space-complexity of O(n)
+    # runs the count of package list length as a placeholder
     for i in range(len(package_list)):
-        min_distance = 5000
+        shortest_distance = 9999
+        # runs through the contents of package list to compare distances and find the lowest distance
         for j in range(len(package_list))[i:]:
             package = package_list[j]
             '''print("Package: ")
             print(package)'''
-            package_address = package.get_address()
-            # print(distance_graph.search(current_location, package_address))
-            distance = distance_graph.search(current_location, package_address)
+            # print(distance_graph.search(current_location, package.get_address()))
+            distance = distance_graph.search(curr_location, package.get_address())
 
-            # print(len(distance_graph.search(current_location, package_address)))
+            # print(len(distance_graph.search(current_location, package.get_address())))
             # print("Package list j: " + str(package))
             '''print("distance DURING: ")
             print(distance)'''
 
-            if distance < min_distance:
+            # if the current shortest distance is no longer shortest, swap
+            if shortest_distance > distance:
                 # print("loop")
                 # print("Distance[0]: " + distance[0])
-                min_distance = distance
-                next_delivery = package
-                temp = package_list[i]
-                package_list[i] = next_delivery
-                package_list[j] = temp
-                '''print("Next Delivery: ")
-                print(next_delivery)'''
-        optimized_list.append(next_delivery)
-        current_location = next_delivery.get_address()
+                shortest_distance = distance
+                next_location = package
+                temp_package = package_list[i]
+                package_list[i] = next_location
+                package_list[j] = temp_package
+                '''print("Next Location: ")
+                print(next_location)'''
+        # move list forward
+        curr_location = next_location.get_address()
+
         # print("Current Location: ")
-        # print(next_delivery.get_address())
-        distance_list.append(min_distance)
+        # print(next_location.get_address())
+
+        # add next location to the list
+        shortest_distance_list.append(next_location)
+
+        # add distance to the distance list for calculating total distance
+        distance_list.append(shortest_distance)
     '''print("Current Location AT END: ")
-    print(current_location)
+    print(curr_location)
     print("Starting Location END: ")
     print(starting_location)
     print("Distance list: END")
     print(distance_list)'''
 
-    for min_distance in distance_list:
-        total_distance += min_distance
+    return_to_start = distance_graph.search(curr_location, starting_location)
+    '''print("Return to hub: ")
+        print(return_to_start)'''
+
+    # add the return distance to the list for calculating
+    distance_list.append(return_to_start)
+
+    # run through the distances and add them up for total distance
+    for shortest_distance in distance_list:
+        total_distance += shortest_distance
+
     '''print("Total Distance: ")
     print(total_distance)
 
-    print("Optimized List: ")
-    for next_delivery in optimized_list:
+    print("shortest_distance List: ")
+    for next_location in shortest_distance_list:
         print("Package {}".format(package.__str__()))'''
 
-    return_to_start = distance_graph.search(current_location, starting_location)
-    '''print("Return to hub: ")
-    print(return_to_start)'''
-    current_location = "4001 South 700 East"
-    distance_list.append(return_to_start)
-
-    return optimized_list, distance_list, total_distance
+    return shortest_distance_list, distance_list, total_distance

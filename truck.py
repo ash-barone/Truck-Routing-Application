@@ -6,6 +6,12 @@ from util import distance_graph
 
 class Truck:
     def __init__(self, truck_num, departure_time):
+        """
+        Initializes truck objects with default capacity of 16, speed of 18, curr_location at the hub, and miles_traveled
+        of 0.
+        :param truck_num: The number of the truck
+        :param departure_time: The time the truck with depart with deliveries
+        """
         self.truck_num = truck_num
         self.CAPACITY = 16
         self.loaded_packages = []
@@ -17,30 +23,65 @@ class Truck:
         # self.delivered_packages = []
 
     def __str__(self):
+        """
+        Formats printing a truck as the following with specific attributes listed.
+        :return: String representation of a truck object
+        """
         return "Truck Number: %s, Packages Loaded: %s, Current Location: %s, Miles Traveled: %s, Current Time: %s" % (
             self.truck_num, self.loaded_packages, self.curr_location, self.miles_traveled, self.curr_time)
 
     def set_departure_time(self, departure_time):
+        """
+        Sets the truck's departure time.
+        :param departure_time: The time to depart on deliveries
+        """
         self.departure_time = departure_time
 
     def get_miles_traveled(self):
+        """
+        Gets the miles traveled by the truck.
+        :return: Miles traveled
+        """
         return self.miles_traveled
 
+    def get_loaded_packages(self):
+        """
+        Get the packages loaded on the truck.
+        :return: Loaded packages list
+        """
+        return self.loaded_packages
+
     def get_delivered_packages(self):
+        """
+        Get the packages delivered by the truck.
+        :return: Delivered packages list
+        """
         return self.delivered_packages
 
     def clear_packages(self):
+        """
+        Clears the loaded packages list.
+        """
         self.loaded_packages.clear()
         # print("CLEARED PACKAGES")
 
     def update_deliver_status(self):
+        """
+        Updates the delivery status of packages being loaded on the trucks.
+        """
+        # runs through loaded packages list and updates all the statuses
         for p in self.loaded_packages:
             p.delivery_status = "Loaded on truck " + str(self.truck_num) + " at " + str(
                 self.departure_time.strftime(
                     "%H:%M:%S")) + ". Still in transit. "
 
     def load_packages(self, truck_num, package_list):
-        # if self.departure_time <= set_time:
+        """
+        Loads the packages from a list onto the specific truck adding them to the loaded packages list
+        :param truck_num: The number of the truck being loaded
+        :param package_list: The list of packages to be loaded
+        """
+        # runs through the package list and loads each package onto the truck
         for i in range(len(package_list)):
             package = package_list[i]
             '''package.delivery_status = "Loaded on truck " + str(truck_num) + " at " + str(
@@ -53,7 +94,16 @@ class Truck:
             # print("Packages Loaded on Truck:")
             # print("Package: {}".format(package.__str__()))
 
-    def deliver_packages(self, set_time, optimized_list, distance_list):
+    def deliver_packages(self, set_time, shortest_distance_list, distance_list):
+        """
+        Delivers the packages loaded onto a truck using the shortest_distance list order plus the distance_list to
+        calculate miles traveled.
+        Space-time complexity of O(n^2).
+        :param set_time: The time to stop the delivery process. Default is EOD. Used to check status at specific times.
+        :param shortest_distance_list: List with order for delivering packages to optimize mileage
+        :param distance_list: The list of distances between each address in the optimized list in order
+        :return:
+        """
         self.curr_time = self.departure_time
         '''print("Temp Time AT START LOOP: ")
         print(self.curr_time)'''
@@ -63,20 +113,23 @@ class Truck:
         print(distance_list)'''
         delivered_packages = []
         self.update_deliver_status()
+
+        # run through the distance list to deliver each one
         for i in range(len(distance_list) - 1):  # run through distance list
 
-            if self.curr_time < set_time:  # set time is time you want to see statuses at and temp time is the loop
+            # checks to see if the set time is later than the current time. used to determine how far in delivery
+            # route to complete for status updates
+            if self.curr_time < set_time:
                 # time per iteration
                 self.miles_traveled += distance_list[i]  # add distance to the miles traveled
                 time_elapsed_in_seconds = ((distance_list[
                                                 i] / 18.0) * 60.0) * 60.0  # time elapse in minutes with decimal
                 # being the seconds fraction of a minute
-                # time_elapsed = timedelta(seconds=time_elapsed_in_seconds)
-                # temp_time += timedelta(seconds=time_elapsed_in_seconds)
+
                 '''print("Temp Time After first temp time < set time check: ")
                 print(self.curr_time)'''
 
-                package_delivered_id = optimized_list[i].get_package_id()
+                package_delivered_id = shortest_distance_list[i].get_package_id()
                 '''print("Loaded Packages: ")
                 print(self.loaded_packages)'''
                 '''if temp_time + timedelta(seconds=time_elapsed_in_seconds) < set_time:
@@ -84,28 +137,13 @@ class Truck:
                     print("Time Temp New: ")
                     print(temp_time)'''
 
+                # checks if elapsed time goes past the set time to tell method to stop
                 if (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) < set_time:
                     self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
-                    count = 0
+                    # runs through each package in loaded packages
                     for p in self.loaded_packages:
-
-                        if p.get_package_id() == package_delivered_id and ("10:30" in p.get_delivery_deadline() or
-                                                                           "9:00" in p.get_delivery_deadline()):
-
-                            self.curr_location = p.get_address()
-                            p.set_delivery_status(
-                                "Delivered at " + str(
-                                    self.curr_time.strftime("%H:%M:%S")))  # but the right time from above
-                            self.loaded_packages.remove(p)
-                            delivered_packages.append(p)
-                            print("Package delivered: ")
-                            print(p)
-                            # my_hash_table.update(p.get_package_id(), p)
-                            '''for pa in delivered_packages:
-                                print("Delivered packages: ")
-                                print(pa)'''
-
-                        elif p.get_package_id() == package_delivered_id:
+                        # updates the delivery status and removes the package from loaded and onto delivered list
+                        if p.get_package_id() == package_delivered_id:
                             self.curr_location = p.get_address()
                             p.set_delivery_status(
                                 "Delivered at " + str(
@@ -120,14 +158,19 @@ class Truck:
                             '''for pa in delivered_packages:
                                 print("Delivered packages: ")
                                 print(pa)'''
+        # checks if list empty to return truck to hub
         if len(self.loaded_packages) == 0:
             self.return_truck()
+        # prints the packages remaining on truck at the status check time by last delivery timestamp
         else:
             print("\nRemaining packages on truck " + str(self.truck_num) + ": ")
             for p in self.loaded_packages:
                 print(p)
 
     def return_truck(self):
+        """
+        Returns the truck to the hub by checking current location to hub distance and updating truck time and mileage
+        """
         hub = "4001 South 700 East"
         dist_to_hub = distance_graph.search(self.curr_location, hub)
         self.curr_location = "4001 South 700 East"
