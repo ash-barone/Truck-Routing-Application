@@ -274,7 +274,7 @@ class Package:
                         truck3_packages.append(p)
                         # print("Truck 3 not in other lists: " + str(package_id))
 
-        '''print("Number of packages on each truck: ")
+        print("Number of packages on each truck: ")
         print("Truck 1: ")
         print(len(truck1_packages))
         print("Truck 2 Trip 1: ")
@@ -282,7 +282,15 @@ class Package:
         print("Truck 2 Trip 2: ")
         print(len(truck2_packages_trip2))
         print("truck 3: ")
-        print(len(truck3_packages))'''
+        print(len(truck3_packages))
+
+
+def get_all_packages():
+    package_list = []
+    for i in range(len(my_hash_table.table) + 1):
+        package = my_hash_table.search(i + 1)
+        package_list.append(package)
+    return package_list
 
 
 def create_package_lists():

@@ -20,7 +20,7 @@ class Truck:
         self.miles_traveled = 0
         self.departure_time = departure_time
         self.curr_time = datetime.now().strftime("%H:%M:%S")
-        # self.delivered_packages = []
+        self.delivered_packages = []
 
     def __str__(self):
         """
@@ -111,7 +111,6 @@ class Truck:
         self.miles_traveled = 0
         '''print("Distance List: ")
         print(distance_list)'''
-        delivered_packages = []
         self.update_deliver_status()
 
         # run through the distance list to deliver each one
@@ -149,7 +148,7 @@ class Truck:
                                 "Delivered at " + str(
                                     self.curr_time.strftime("%H:%M:%S")))  # but the right time from above
                             self.loaded_packages.remove(p)
-                            delivered_packages.append(p)
+                            self.delivered_packages.append(p)
 
                             # update hash table
                             my_hash_table.update(p.get_package_id(), p)

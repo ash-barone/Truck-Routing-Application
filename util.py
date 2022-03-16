@@ -58,38 +58,27 @@ def find_shortest_distance(truck_location, package_list):
     """
     curr_location = truck_location
     next_location = None
-    starting_location = "4001 South 700 East"
-    '''print("Starting Location BEGIN: ")
-    print(starting_location)'''
     shortest_distance_list = []
     distance_list = []
     total_distance = 0
 
     # runs the count of package list length as a placeholder
-    for i in range(len(package_list)):
+    for j in range(0, len(package_list)):
         shortest_distance = 9999
         # runs through the contents of package list to compare distances and find the lowest distance
-        for j in range(len(package_list))[i:]:
-            package = package_list[j]
+        for k in range(len(package_list))[j:]:
+            package = package_list[k]
             '''print("Package: ")
             print(package)'''
-            # print(distance_graph.search(current_location, package.get_address()))
-            distance = distance_graph.search(curr_location, package.get_address())
-
-            # print(len(distance_graph.search(current_location, package.get_address())))
-            # print("Package list j: " + str(package))
-            '''print("distance DURING: ")
-            print(distance)'''
 
             # if the current shortest distance is no longer shortest, swap
-            if shortest_distance > distance:
+            if shortest_distance > int(distance_graph.search(curr_location, package.get_address())):
                 # print("loop")
-                # print("Distance[0]: " + distance[0])
-                shortest_distance = distance
+                shortest_distance = int(distance_graph.search(curr_location, package.get_address()))
+                temp_package = package_list[j]
                 next_location = package
-                temp_package = package_list[i]
-                package_list[i] = next_location
-                package_list[j] = temp_package
+                package_list[k] = temp_package
+                package_list[j] = next_location
                 '''print("Next Location: ")
                 print(next_location)'''
         # move list forward
@@ -110,12 +99,12 @@ def find_shortest_distance(truck_location, package_list):
     print("Distance list: END")
     print(distance_list)'''
 
-    return_to_start = distance_graph.search(curr_location, starting_location)
+    starting_location = "4001 South 700 East"
     '''print("Return to hub: ")
         print(return_to_start)'''
 
     # add the return distance to the list for calculating
-    distance_list.append(return_to_start)
+    distance_list.append(distance_graph.search(curr_location, starting_location))
 
     # run through the distances and add them up for total distance
     for shortest_distance in distance_list:

@@ -5,7 +5,9 @@ import package
 from truck import Truck
 from package import create_package_lists
 
-
+"""
+Ashley Barone 002660549
+"""
 # initialize set_time to EOD(end of day 5:00PM)
 set_time = (datetime.now().replace(hour=17, minute=0, second=0))
 
@@ -42,7 +44,7 @@ if __name__ == '__main__':
             set_time = datetime.now().replace(hour=set_time_hour, minute=set_time_minute, second=0)
 
             # checks if the set time entered by user is before truck 1 departure
-            if set_time > datetime.now().replace(hour=8, minute=0, second=0):
+            if set_time >= datetime.now().replace(hour=8, minute=0, second=0):
                 try:
                     truck1.clear_packages()
                     truck2.clear_packages()
@@ -62,8 +64,9 @@ if __name__ == '__main__':
                     truck1.load_packages(1, package.truck1_packages)
 
                     # create and load truck 2 trip 1
-                    truck2 = Truck(2, datetime.now().replace(hour=9, minute=5, second=0))
-                    truck2.load_packages(2, package.truck2_packages_trip1)
+                    if set_time >= datetime.now().replace(hour=9, minute=5, second=0):
+                        truck2 = Truck(2, datetime.now().replace(hour=9, minute=5, second=0))
+                        truck2.load_packages(2, package.truck2_packages_trip1)
 
                     # create and load truck 3
                     '''truck3 = Truck(3, datetime.now().replace(hour=10, minute=19, second=0))
@@ -95,12 +98,8 @@ if __name__ == '__main__':
                     truck1.deliver_packages(set_time, truck1_alg_results[0],
                                             truck1_alg_results[1])
                     # truck1.return_truck()
-                    print("\nTruck 1 Current Time and Location:")
-                    if truck1.curr_time > set_time:
-                        print("Truck still at hub")
-                    else:
-                        print(truck1.curr_time.strftime("%H:%M:%S"))
-                        print(truck1.curr_location)
+                    print("\nTruck 1 Current Location and Miles Traveled: ")
+                    print(truck1.curr_location)
                     print(truck1.get_miles_traveled())
                     print("\n")
 
@@ -110,34 +109,33 @@ if __name__ == '__main__':
                                             truck2_trip1_alg_results[0],
                                             truck2_trip1_alg_results[1])
                     # truck2.return_truck()
-                    print("\nTruck 2 Current Time and Location: ")
-                    if truck2.curr_time > set_time:
-                        print("Truck still at hub")
-                    else:
-                        print(truck2.curr_time.strftime("%H:%M:%S"))
-                        print(truck2.curr_location)
+                    print("\nTruck 2 Current Location and Miles Traveled: ")
+                    print(truck2.curr_location)
                     print("Miles traveled first trip: ")
                     print(str(truck2.get_miles_traveled()))
                     print("\n")
 
                     # truck trip 2
                     print("Truck 2 Trip 2:\n")
-                    truck2.set_departure_time(datetime.now().replace(hour=10, minute=55, second=0))
-                    truck2.load_packages(2, package.truck2_packages_trip2)
+                    if set_time >= datetime.now().replace(hour=10, minute=44, second=0):
+                        truck2.set_departure_time(datetime.now().replace(hour=10, minute=44, second=0))
+                        truck2.load_packages(2, package.truck2_packages_trip2)
                     truck2_trip2_alg_results = util.find_shortest_distance(truck2.curr_location, truck2.loaded_packages)
                     truck2.deliver_packages(set_time,
                                             truck2_trip2_alg_results[0],
                                             truck2_trip2_alg_results[1])
                     # truck2.return_truck()
-                    print("\nTruck 2 Current Time and Location: ")
-                    if truck2.curr_time > set_time:
-                        print("Truck still at hub")
-                    else:
-                        print(truck2.curr_time.strftime("%H:%M:%S"))
+                    print("\nTruck 2 Current Location and Miles Traveled: ")
                     print(truck2.curr_location)
                     print("Miles traveled: ")
                     print(truck2.get_miles_traveled())
                     print("\n")
+
+                    print("Packages still at hub: ")
+                    for package in package.get_all_packages():
+                        if (package not in truck1.get_delivered_packages() and \
+                                package not in truck2.get_delivered_packages()) and package is not None:
+                            print(package)
 
                     # truck 3 trip
                     '''truck3.deliver_packages(set_time, truck3_alg_results[0],
@@ -149,7 +147,7 @@ if __name__ == '__main__':
                     print(truck3.get_miles_traveled())
                     print("\n")'''
 
-                    print("TOTAL MILES TRAVELED: ")
+                    print("\nTOTAL MILES TRAVELED: ")
                     print(truck1.get_miles_traveled() + truck2.get_miles_traveled())
                     print("\n")
 
@@ -157,8 +155,8 @@ if __name__ == '__main__':
                     print("Invalid input. Please try again.")
 
             # checks if the set time entered by user is after packages arrived but before truck 1 departure
-            elif (datetime.now().replace(hour=7, minute=29, second=0)) < set_time < (datetime.now().replace(hour=8,
-                                                                                                            minute=0,
+            elif (datetime.now().replace(hour=7, minute=29, second=0)) < set_time < (datetime.now().replace(hour=7,
+                                                                                                            minute=59,
                                                                                                             second=0)):
                 create_package_lists()
                 print("\nPackages at hub have not been loaded onto trucks yet. Below is today's list of packages.\n")
@@ -234,7 +232,7 @@ if __name__ == '__main__':
 
             # truck trip 2
             print("Truck 2 Trip 2:\n")
-            truck2.set_departure_time(datetime.now().replace(hour=10, minute=55, second=0))
+            truck2.set_departure_time(datetime.now().replace(hour=10, minute=44, second=0))
             truck2.load_packages(2, package.truck2_packages_trip2)
             truck2_trip2_alg_results = util.find_shortest_distance(truck2.curr_location, truck2.loaded_packages)
             truck2.deliver_packages((datetime.now().replace(hour=17, minute=0, second=0)), truck2_trip2_alg_results[0],
