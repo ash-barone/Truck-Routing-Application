@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import main
+import packages
 from util import distance_graph
 
 
@@ -76,15 +77,24 @@ class Truck:
         # self.delivered_packages.clear()
         # print("CLEARED PACKAGES")
 
-    def update_deliver_status(self):
+    def update_delivery_status(self, status):
         """
         Updates the delivery status of packages being loaded on the trucks.
         """
         # runs through loaded packages list and updates all the statuses
-        for p in self.loaded_packages:
-            p.delivery_status = "Loaded on truck " + str(self.truck_num) + " at " + str(
-                self.departure_time.strftime(
-                    "%H:%M:%S")) + ". Still in transit. "
+        if status == "loaded":
+            for p in self.loaded_packages:
+                p.delivery_status = "Loaded on truck " + str(self.truck_num) + " at " + str(
+                    self.departure_time.strftime(
+                        "%H:%M:%S")) + ". Still in transit. "
+        elif status == "hub":
+            for p in self.delivered_packages:
+                if "Delayed" in str(p):
+                    p.delivery_status = "Delayed. Arriving at hub at " + \
+                             str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
+                else:
+                    p.delivery_status = "Arrived at hub at " + \
+                             str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
 
     def load_packages(self, truck_num, package_list, set_time):
         """
@@ -124,7 +134,7 @@ class Truck:
         self.miles_traveled = 0
         '''print("Distance List: ")
         print(distance_list)'''
-        self.update_deliver_status()
+        self.update_delivery_status("loaded")
 
         # run through the distance list to deliver each one
         for i in range(len(distance_list) - 1):  # run through distance list
@@ -164,7 +174,7 @@ class Truck:
                             self.delivered_packages.append(p)
 
                             # update hash table
-                            main.hash_table.update(p.get_package_id(), p)
+                            packages.hash_table.update(p.get_package_id(), p)
                             print("Package delivered: ")
                             print(p)
                             '''for pa in delivered_packages:
@@ -172,20 +182,34 @@ class Truck:
                                 print(pa)'''
         # checks if list empty to return truck to hub
         if len(self.loaded_packages) == 0:
-            self.return_truck()
+            self.return_truck(set_time)
         # prints the packages remaining on truck at the status check time by last delivery timestamp
         else:
             print("\nRemaining packages on truck " + str(self.truck_num) + ": ")
             for p in self.loaded_packages:
                 print(p)
 
-    def return_truck(self):
+    def return_truck(self, set_time):
         """
         Returns the truck to the hub by checking current location to hub distance and updating truck time and mileage
         """
         hub = "4001 South 700 East"
         dist_to_hub = distance_graph.search(self.curr_location, hub)
-        self.curr_location = "4001 South 700 East"
-        self.miles_traveled += dist_to_hub  # add distance to the miles traveled
         time_elapsed_in_seconds = ((dist_to_hub / 18.0) * 60.0) * 60.0
-        self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
+        if (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) < set_time:
+            self.curr_location = "4001 South 700 East"
+            self.miles_traveled += dist_to_hub  # add distance to the miles traveled
+            self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
+        else:
+            self.curr_location = "In transit to hub"
+            temp_time = set_time - self.curr_time
+            # print(temp_time)
+            temp_time_seconds = temp_time.total_seconds()
+            # print(temp_time_seconds)
+            temp_time_hours = ((temp_time_seconds/60)/60)
+            temp_time_miles = (temp_time_hours * 18)
+            # print(temp_time_miles)
+            self.miles_traveled += temp_time_miles
+            # print(self.miles_traveled)
+            self.curr_time += timedelta(seconds=temp_time_seconds)
+            # print(self.curr_time)

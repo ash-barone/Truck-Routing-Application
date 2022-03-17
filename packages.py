@@ -2,13 +2,13 @@ import csv
 from datetime import datetime
 
 from hash import HashTable
-from main import truck1, truck2, truck3, hash_table
+from main import truck1, truck2, truck3
 
 truck1_packages = []
 truck2_packages_trip1 = []
 truck2_packages_trip2 = []
 truck3_packages = []
-# hash_table = HashTable()
+hash_table = HashTable()
 
 
 class Package:
@@ -173,6 +173,14 @@ class Package:
         """
         self.delivery_status = deliver_status
 
+    def reset_delivery_status(self):
+        if "Delayed" in str(self):
+            self.delivery_status = "Delayed. Arriving at hub at " + \
+                     str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
+        else:
+            self.delivery_status = "Arrived at hub at " + \
+                     str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
+
     def load_package_data(file_name, hash_table):
         """
         Reads packages.csv and adds each row to the hash table as a package object. After adding the package object,
@@ -198,6 +206,7 @@ class Package:
             next(package_data)  # skip top line
             # cycle through each package in the package data as read by the csv reader
             for package in package_data:
+                #print("got here")
                 package_id = int(package[0])
                 address = package[1]
                 city = package[2]
@@ -223,6 +232,7 @@ class Package:
                 else:
                     notes = package[7]
                 if "Delayed" in package[7]:
+                    # print("got here")
                     status = "Delayed. Arriving at hub at " + \
                              str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
                 else:
@@ -270,14 +280,12 @@ class Package:
                         package not in truck3_packages:
                     if len(truck3_packages) < 11:
                         truck3_packages.append(p)
-                        # print("Truck 2 not in other lists: " + str(package_id))
                     elif len(truck1_packages) < 10:
                         truck1_packages.append(p)
                     elif len(truck2_packages_trip1) < 16:
                         truck2_packages_trip1.append(p)
                     '''elif len(truck3_packages) < 16:
                         truck3_packages.append(p)'''
-                        # print("Truck 3 not in other lists: " + str(package_id))
 
         '''print("Number of packages on each truck: ")
         print("Truck 1: ")
@@ -314,11 +322,9 @@ def create_package_lists():
     Calls the load package data method to create the hash table of packages.
     """
     # my_hash_table = HashTable()
-    Package.load_package_data("packages.csv",
-                              hash_table)
+    Package.load_package_data("packages.csv", hash_table)
 
-    print("Packages from Hashtable:")
+    '''print("Packages from Hashtable:")
     # Fetch data from Hash Table
     for i in range(len(hash_table.table) + 1):
-        print("Package: {}".format(hash_table.search(i + 1)))
-
+        print("Package: {}".format(hash_table.search(i)))'''

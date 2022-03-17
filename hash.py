@@ -58,9 +58,9 @@ class HashTable:
         # print("bucket list: ")
         # print(bucket_list)
         # print(bucket_list)
-
+        # print("bucket_list: " + str(bucket_list))
         for key_value in bucket_list:
-            print("key_value: " + str(key_value))
+            # print("key_value: " + str(key_value))
             if key_value[0] == key:
                 return key_value[1]
         return None
@@ -74,9 +74,8 @@ class HashTable:
         """
         bucket = hash(key) % len(self.table)
         bucket_list = self.table[bucket]
-
         for key_value in bucket_list:
-            # print (key_value)
+            # print(key_value)
             if key_value[0] == key:
                 bucket_list.remove([key_value[0], key_value[1]])
                 return True
