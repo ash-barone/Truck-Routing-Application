@@ -112,6 +112,11 @@ if __name__ == '__main__':
                                             truck1_alg_results[1])
                     # truck1.return_truck()
                     print("\nTruck 1 Current Location and Miles Traveled: ")
+                    if truck1.departure_time > set_time:
+                        truck1.curr_time = set_time
+                        print(truck1.curr_time)
+                    else:
+                        print(truck1.curr_time)
                     print(truck1.curr_location)
                     print(truck1.get_miles_traveled())
                     print("\n")
@@ -123,6 +128,11 @@ if __name__ == '__main__':
                                             truck2_trip1_alg_results[1])
                     # truck2.return_truck()
                     print("\nTruck 2 Current Location and Miles Traveled: ")
+                    if truck2.departure_time > set_time:
+                        truck2.curr_time = set_time
+                        print(truck2.curr_time)
+                    else:
+                        print(truck2.curr_time)
                     print(truck2.curr_location)
                     print(str(truck2.get_miles_traveled()))
                     print("\n")
@@ -150,6 +160,11 @@ if __name__ == '__main__':
                                             truck3_alg_results[1])
                     # truck3.return_truck()
                     print("\nTruck 3 Current Location and Miles Traveled:")
+                    if truck3.departure_time > set_time:
+                        truck3.curr_time = set_time
+                        print(truck3.curr_time)
+                    else:
+                        print(truck3.curr_time)
                     print(truck3.curr_location)
                     print(truck3.get_miles_traveled())
                     print("\n")
@@ -158,6 +173,8 @@ if __name__ == '__main__':
                     # print(truck3.get_loaded_packages())
                     # print(truck3.get_delivered_packages())
                     at_hub_string = "at hub "
+
+                    # Space-time complexity of O(n)
                     for i in range(len(packages.hash_table.table) + 1):
                         search_result = str(packages.hash_table.search(i))
                         if at_hub_string in search_result:
@@ -183,9 +200,9 @@ if __name__ == '__main__':
                                                        and truck3.curr_time == datetime.now().replace(hour=12,
                                                                                                       minute=43, second=0).strftime("%H:%M:%S"))):
                         print("TIME ALL TRUCKS COMPLETED ROUTE BACK AT HUB: ")
-                        print("Truck 1: " + str(truck1.curr_time.strftime("%H:%M:%S")))
-                        print("Truck 2: " + str(truck2.curr_time.strftime("%H:%M:%S")))
-                        print("Truck 3: " + str(truck3.curr_time.strftime("%H:%M:%S")))
+                        print("Truck 1: " + str(truck1.curr_time))
+                        print("Truck 2: " + str(truck2.curr_time))
+                        print("Truck 3: " + str(truck3.curr_time))
 
                 except ValueError:
                     print("Invalid input. Please try again.")
@@ -196,6 +213,7 @@ if __name__ == '__main__':
                                                                                                             second=0)):
                 packages.create_package_lists()
                 print("\nPackages at hub have not been loaded onto trucks yet. Below is today's list of packages.\n")
+                # Space-time complexity is O(n)
                 for i in range(len(packages.my_hash_table.table) + 1):
                     print("Package: {}".format(packages.my_hash_table.search(i)))
 

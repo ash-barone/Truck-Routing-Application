@@ -91,10 +91,10 @@ class Truck:
             for p in self.delivered_packages:
                 if "Delayed" in str(p):
                     p.delivery_status = "Delayed. Arriving at hub at " + \
-                             str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
+                                        str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
                 else:
                     p.delivery_status = "Arrived at hub at " + \
-                             str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
+                                        str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
 
     def load_packages(self, truck_num, package_list, set_time):
         """
@@ -141,7 +141,7 @@ class Truck:
 
             # checks to see if the set time is later than the current time. used to determine how far in delivery
             # route to complete for status updates
-            if self.curr_time < set_time:
+            if self.curr_time <= set_time:
                 # time per iteration
                 time_elapsed_in_seconds = ((distance_list[
                                                 i] / 18.0) * 60.0) * 60.0  # time elapse in minutes with decimal
@@ -158,7 +158,7 @@ class Truck:
                     print(temp_time)'''
 
                 # checks if elapsed time goes past the set time to tell method to stop
-                if (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) < set_time:
+                if (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) <= set_time:
                     self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
                     # print(self.curr_time + timedelta(seconds=time_elapsed_in_seconds))
                     self.miles_traveled += distance_list[i]  # add distance to the miles traveled
@@ -180,14 +180,30 @@ class Truck:
                             '''for pa in delivered_packages:
                                 print("Delivered packages: ")
                                 print(pa)'''
-        # checks if list empty to return truck to hub
-        if len(self.loaded_packages) == 0:
-            self.return_truck(set_time)
+                else:
+                    self.curr_location = "In transit to next delivery"
+                    temp_time = set_time - self.curr_time
+                    # print(temp_time)
+                    temp_time_seconds = temp_time.total_seconds()
+                    # print(temp_time_seconds)
+                    temp_time_hours = ((temp_time_seconds / 60) / 60)
+                    temp_time_miles = (temp_time_hours * 18)
+                    # print(temp_time_miles)
+                    self.miles_traveled += temp_time_miles
+                    # print(self.miles_traveled)
+                    self.curr_time += timedelta(seconds=temp_time_seconds)
+        if self.departure_time > set_time:
+            print("Truck not yet loaded. Truck will be loaded at " + str(self.curr_time.strftime("%H:%M:%S")))
+        elif len(self.loaded_packages) == 0:
+            if len(self.delivered_packages) != 0:
+                self.return_truck(set_time)
         # prints the packages remaining on truck at the status check time by last delivery timestamp
-        else:
+        elif len(self.loaded_packages) > 0:
             print("\nRemaining packages on truck " + str(self.truck_num) + ": ")
             for p in self.loaded_packages:
                 print(p)
+
+        # checks if list empty to return truck to hub
 
     def return_truck(self, set_time):
         """
@@ -200,16 +216,18 @@ class Truck:
             self.curr_location = "4001 South 700 East"
             self.miles_traveled += dist_to_hub  # add distance to the miles traveled
             self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
+            self.curr_time = self.curr_time.strftime("%H:%M:%S")
         else:
             self.curr_location = "In transit to hub"
             temp_time = set_time - self.curr_time
             # print(temp_time)
             temp_time_seconds = temp_time.total_seconds()
             # print(temp_time_seconds)
-            temp_time_hours = ((temp_time_seconds/60)/60)
+            temp_time_hours = ((temp_time_seconds / 60) / 60)
             temp_time_miles = (temp_time_hours * 18)
             # print(temp_time_miles)
             self.miles_traveled += temp_time_miles
             # print(self.miles_traveled)
             self.curr_time += timedelta(seconds=temp_time_seconds)
+            self.curr_time = self.curr_time.strftime("%H:%M:%S")
             # print(self.curr_time)
