@@ -206,87 +206,168 @@ class Package:
             next(package_data)  # skip top line
             # cycle through each package in the package data as read by the csv reader
             for package in package_data:
-                #print("got here")
-                package_id = int(package[0])
-                address = package[1]
-                city = package[2]
-                state = package[3]
-                package_zip = package[4]
-                if package_id == 9:
-                    address = "410 S State St"
-                    city = "Salt Lake City"
-                    state = "UT"
-                    package_zip = "84111"
-                '''if "EOD" in package[5]:
-                    deadline = datetime.now().replace(hour=17, minute=0, second=0).strftime("%H:%M:%S")
-                elif "9:00" in package[5]:
-                    deadline = datetime.now().replace(hour=9, minute=0, second=0).strftime("%H:%M:%S")
-                elif "10:30" in package[5]:
-                    deadline = datetime.now().replace(hour=10, minute=30, second=0).strftime("%H:%M:%S")
-                else:'''
-                deadline = package[5]
-                mass = package[6]
-                # if package has no special notes
-                if len(package[7]) == 0:
-                    notes = "N/A"
-                else:
-                    notes = package[7]
-                if "Delayed" in package[7]:
-                    # print("got here")
-                    status = "Delayed. Arriving at hub at " + \
-                             str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
-                else:
-                    status = "Arrived at hub at " + \
-                             str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
-
-                p = Package(package_id, address, city, state, package_zip, deadline, mass, notes, status)
-
-                # insert it into the hash table
-                hash_table.insert(package_id, p)
-
-                # manually add package 9 to truck 3
-                if package_id == 9:
-                    truck3_packages.append(p)
-                    # print("Truck 2 package 9: " + str(package_id))
-
-                elif "truck 2" in notes:
-                    truck2_packages_trip1.append(p)
-                    # print("Truck 2 only truck 2: " + str(package_id))
-
-                elif "Delayed" in status:
-                    if "EOD" in deadline:
-                        truck3_packages.append(p)
+                if hash_table.search(package[0]):
+                    #print("got here")
+                    package_id = int(package[0])
+                    address = package[1]
+                    city = package[2]
+                    state = package[3]
+                    package_zip = package[4]
+                    if package_id == 9:
+                        address = "410 S State St"
+                        city = "Salt Lake City"
+                        state = "UT"
+                        package_zip = "84111"
+                    '''if "EOD" in package[5]:
+                        deadline = datetime.now().replace(hour=17, minute=0, second=0).strftime("%H:%M:%S")
+                    elif "9:00" in package[5]:
+                        deadline = datetime.now().replace(hour=9, minute=0, second=0).strftime("%H:%M:%S")
+                    elif "10:30" in package[5]:
+                        deadline = datetime.now().replace(hour=10, minute=30, second=0).strftime("%H:%M:%S")
+                    else:'''
+                    deadline = package[5]
+                    mass = package[6]
+                    # if package has no special notes
+                    if len(package[7]) == 0:
+                        notes = "N/A"
                     else:
-                        truck2_packages_trip1.append(p)
-                    # print("Truck 2 delayed: " + str(package_id))
+                        notes = package[7]
+                    if "Delayed" in package[7]:
+                        # print("got here")
+                        status = "Delayed. Arriving at hub at " + \
+                                 str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
+                    else:
+                        status = "Arrived at hub at " + \
+                                 str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
 
-                # manually add packages that must go together
-                elif "Must be delivered with" in notes or package_id == 13 or package_id == 15 or package_id == 19:
-                    truck1_packages.append(p)
-                    # print("Truck 1 delivered with others: " + str(package_id))
+                    p = Package(package_id, address, city, state, package_zip, deadline, mass, notes, status)
 
-                # add packages with deadlines
-                elif "EOD" not in deadline and package not in truck1_packages and package not in truck2_packages_trip1 \
-                        and package not in truck3_packages:
-                    if len(truck1_packages) < 16:
-                        truck1_packages.append(p)
-                        # print("Truck 1 eod not in deadline: " + str(package_id))
-                    elif len(truck2_packages_trip1) < 16:
-                        truck2_packages_trip1.append(p)
-                        # print("Truck 2 eod not in deadline: " + str(package_id))
+                    # insert it into the hash table
+                    hash_table.update(package_id, p)
 
-                # add all the other packages
-                elif package not in truck1_packages and package not in truck2_packages_trip1 and \
-                        package not in truck3_packages:
-                    if len(truck3_packages) < 11:
+                    # manually add package 9 to truck 3
+                    if package_id == 9:
                         truck3_packages.append(p)
-                    elif len(truck1_packages) < 10:
-                        truck1_packages.append(p)
-                    elif len(truck2_packages_trip1) < 16:
-                        truck2_packages_trip1.append(p)
-                    '''elif len(truck3_packages) < 16:
-                        truck3_packages.append(p)'''
+                        # print("Truck 2 package 9: " + str(package_id))
 
+                    elif "truck 2" in notes:
+                        truck2_packages_trip1.append(p)
+                        # print("Truck 2 only truck 2: " + str(package_id))
+
+                    elif "Delayed" in status:
+                        if "EOD" in deadline:
+                            truck3_packages.append(p)
+                        else:
+                            truck2_packages_trip1.append(p)
+                        # print("Truck 2 delayed: " + str(package_id))
+
+                    # manually add packages that must go together
+                    elif "Must be delivered with" in notes or package_id == 13 or package_id == 15 or package_id == 19:
+                        truck1_packages.append(p)
+                        # print("Truck 1 delivered with others: " + str(package_id))
+
+                    # add packages with deadlines
+                    elif "EOD" not in deadline and package not in truck1_packages and package not in truck2_packages_trip1 \
+                            and package not in truck3_packages:
+                        if len(truck1_packages) < 16:
+                            truck1_packages.append(p)
+                            # print("Truck 1 eod not in deadline: " + str(package_id))
+                        elif len(truck2_packages_trip1) < 16:
+                            truck2_packages_trip1.append(p)
+                            # print("Truck 2 eod not in deadline: " + str(package_id))
+
+                    # add all the other packages
+                    elif package not in truck1_packages and package not in truck2_packages_trip1 and \
+                            package not in truck3_packages:
+                        if len(truck3_packages) < 11:
+                            truck3_packages.append(p)
+                        elif len(truck1_packages) < 10:
+                            truck1_packages.append(p)
+                        elif len(truck2_packages_trip1) < 16:
+                            truck2_packages_trip1.append(p)
+                        '''elif len(truck3_packages) < 16:
+                            truck3_packages.append(p)'''
+                else:
+                    # print("got here")
+                    package_id = int(package[0])
+                    address = package[1]
+                    city = package[2]
+                    state = package[3]
+                    package_zip = package[4]
+                    if package_id == 9:
+                        address = "410 S State St"
+                        city = "Salt Lake City"
+                        state = "UT"
+                        package_zip = "84111"
+                    '''if "EOD" in package[5]:
+                        deadline = datetime.now().replace(hour=17, minute=0, second=0).strftime("%H:%M:%S")
+                    elif "9:00" in package[5]:
+                        deadline = datetime.now().replace(hour=9, minute=0, second=0).strftime("%H:%M:%S")
+                    elif "10:30" in package[5]:
+                        deadline = datetime.now().replace(hour=10, minute=30, second=0).strftime("%H:%M:%S")
+                    else:'''
+                    deadline = package[5]
+                    mass = package[6]
+                    # if package has no special notes
+                    if len(package[7]) == 0:
+                        notes = "N/A"
+                    else:
+                        notes = package[7]
+                    if "Delayed" in package[7]:
+                        # print("got here")
+                        status = "Delayed. Arriving at hub at " + \
+                                 str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
+                    else:
+                        status = "Arrived at hub at " + \
+                                 str(datetime.now().replace(hour=7, minute=30, second=0).strftime("%H:%M:%S"))
+
+                    p = Package(package_id, address, city, state, package_zip, deadline, mass, notes, status)
+
+                    # insert it into the hash table
+                    hash_table.insert(package_id, p)
+
+                    # manually add package 9 to truck 3
+                    if package_id == 9:
+                        truck3_packages.append(p)
+                        # print("Truck 2 package 9: " + str(package_id))
+
+                    elif "truck 2" in notes:
+                        truck2_packages_trip1.append(p)
+                        # print("Truck 2 only truck 2: " + str(package_id))
+
+                    elif "Delayed" in status:
+                        if "EOD" in deadline:
+                            truck3_packages.append(p)
+                        else:
+                            truck2_packages_trip1.append(p)
+                        # print("Truck 2 delayed: " + str(package_id))
+
+                    # manually add packages that must go together
+                    elif "Must be delivered with" in notes or package_id == 13 or package_id == 15 or package_id == 19:
+                        truck1_packages.append(p)
+                        # print("Truck 1 delivered with others: " + str(package_id))
+
+                    # add packages with deadlines
+                    elif "EOD" not in deadline and package not in truck1_packages and package not in truck2_packages_trip1 \
+                            and package not in truck3_packages:
+                        if len(truck1_packages) < 16:
+                            truck1_packages.append(p)
+                            # print("Truck 1 eod not in deadline: " + str(package_id))
+                        elif len(truck2_packages_trip1) < 16:
+                            truck2_packages_trip1.append(p)
+                            # print("Truck 2 eod not in deadline: " + str(package_id))
+
+                    # add all the other packages
+                    elif package not in truck1_packages and package not in truck2_packages_trip1 and \
+                            package not in truck3_packages:
+                        if len(truck3_packages) < 11:
+                            truck3_packages.append(p)
+                        elif len(truck1_packages) < 10:
+                            truck1_packages.append(p)
+                        elif len(truck2_packages_trip1) < 16:
+                            truck2_packages_trip1.append(p)
+                        '''elif len(truck3_packages) < 16:
+                            truck3_packages.append(p)'''
         '''print("Number of packages on each truck: ")
         print("Truck 1: ")
         print(len(truck1_packages))

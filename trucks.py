@@ -88,7 +88,7 @@ class Truck:
                     self.departure_time.strftime(
                         "%H:%M:%S")) + ". Still in transit. "
         elif status == "hub":
-            for p in self.delivered_packages:
+            for p in self.get_loaded_packages():
                 if "Delayed" in str(p):
                     p.delivery_status = "Delayed. Arriving at hub at " + \
                                         str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
@@ -103,19 +103,19 @@ class Truck:
         :param truck_num: The number of the truck being loaded
         :param package_list: The list of packages to be loaded
         """
-        if self.departure_time < set_time:
-            # runs through the package list and loads each package onto the truck
-            for i in range(len(package_list)):
-                package = package_list[i]
-                '''package.delivery_status = "Loaded on truck " + str(truck_num) + " at " + str(
+        # if self.departure_time < set_time:
+        # runs through the package list and loads each package onto the truck
+        for i in range(len(package_list)):
+            package = package_list[i]
+            '''package.delivery_status = "Loaded on truck " + str(truck_num) + " at " + str(
                         self.departure_time.strftime(
                             "%H:%M:%S")) + ". Still in transit. "'''
-                self.loaded_packages.append(package)
-                '''print("Package Id when Loaded: ")
+            self.loaded_packages.append(package)
+            '''print("Package Id when Loaded: ")
                     print(package.get_package_id())'''
 
-                # print("Packages Loaded on Truck:")
-                # print("Package: {}".format(package.__str__()))
+            # print("Packages Loaded on Truck:")
+            # print("Package: {}".format(package.__str__()))
 
     def deliver_packages(self, set_time, shortest_distance_list, distance_list):
         """
@@ -135,12 +135,13 @@ class Truck:
         '''print("Distance List: ")
         print(distance_list)'''
         self.update_delivery_status("loaded")
+        delivered_package_success = True
 
         # run through the distance list to deliver each one
         for i in range(len(distance_list) - 1):  # run through distance list
-
             # checks to see if the set time is later than the current time. used to determine how far in delivery
             # route to complete for status updates
+            count = 0
             if self.curr_time <= set_time:
                 # time per iteration
                 time_elapsed_in_seconds = ((distance_list[
@@ -156,9 +157,10 @@ class Truck:
                     temp_time += timedelta(seconds=time_elapsed_in_seconds)
                     print("Time Temp New: ")
                     print(temp_time)'''
-
                 # checks if elapsed time goes past the set time to tell method to stop
-                if (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) <= set_time:
+                if (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) <= set_time \
+                        and delivered_package_success:
+                    #print("WHY THO")
                     self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
                     # print(self.curr_time + timedelta(seconds=time_elapsed_in_seconds))
                     self.miles_traveled += distance_list[i]  # add distance to the miles traveled
@@ -180,7 +182,10 @@ class Truck:
                             '''for pa in delivered_packages:
                                 print("Delivered packages: ")
                                 print(pa)'''
-                else:
+                            delivered_package_success = True
+                            # count += 1
+                elif (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) >= set_time:
+                    #print("PLS?")
                     self.curr_location = "In transit to next delivery"
                     temp_time = set_time - self.curr_time
                     # print(temp_time)
@@ -192,6 +197,12 @@ class Truck:
                     self.miles_traveled += temp_time_miles
                     # print(self.miles_traveled)
                     self.curr_time += timedelta(seconds=temp_time_seconds)
+                    delivered_package_success = False
+                    count += 1
+                    break
+                else:
+                    delivered_package_success = False
+
         if self.departure_time > set_time:
             print("Truck not yet loaded. Truck will be loaded at " + str(self.curr_time.strftime("%H:%M:%S")))
         elif len(self.loaded_packages) == 0:
