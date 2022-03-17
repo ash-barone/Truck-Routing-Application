@@ -51,6 +51,7 @@ class Graph:
         # print("vertexes " + str(curr_vertex) + " , " + str(next_vertex))
         temp_v = 0
         # search through the keys and values in the graph
+        # Space-time complexity of O(n)
         for k, v in graph:
             # print("k[0]"+ str(k[0])+ " curr vertex "+ str(curr_vertex))
             if k[0] == curr_vertex:

@@ -311,6 +311,8 @@ class Package:
                     # if package has no special notes
                     if len(package[7]) == 0:
                         notes = "N/A"
+                    elif "Delayed" in package[7]:
+                        notes = "Delayed"
                     else:
                         notes = package[7]
                     if "Delayed" in package[7]:
