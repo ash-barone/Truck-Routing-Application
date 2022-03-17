@@ -174,6 +174,10 @@ class Package:
         self.delivery_status = deliver_status
 
     def reset_delivery_status(self):
+        """
+        Resets the delivery status of packages as needed throughout the functions of the user interface
+        to avoid inaccurate reporting
+        """
         if "Delayed" in str(self):
             self.delivery_status = "Delayed. Arriving at hub at " + \
                      str(datetime.now().replace(hour=9, minute=5, second=0).strftime("%H:%M:%S"))
@@ -205,6 +209,7 @@ class Package:
 
             next(package_data)  # skip top line
             # cycle through each package in the package data as read by the csv reader
+            # Space-time complexity of O(n)
             for package in package_data:
                 if hash_table.search(package[0]):
                     #print("got here")
@@ -380,23 +385,34 @@ class Package:
 
 
 def get_all_packages():
+    """
+    Method to get a list of all packages associated with each truck
+    :return: The list of all packages added from each truck's delivered and loaded lists
+    """
     package_list = []
     '''for i in range(len(hash_table.table) + 1):
         package = hash_table.search(i + 1)
         package_list.append(package)'''
 
+    # Space-time complexity of O(n)
     for dp1 in truck1.get_delivered_packages():
         package_list.append(dp1)
+    # Space-time complexity of O(n)
     for lp1 in truck1.get_loaded_packages():
         package_list.append(lp1)
+    # Space-time complexity of O(n)
     for dp2 in truck2.get_delivered_packages():
         package_list.append(dp2)
+    # Space-time complexity of O(n)
     for lp2 in truck2.get_loaded_packages():
         package_list.append(lp2)
+    # Space-time complexity of O(n)
     for dp3 in truck3.get_delivered_packages():
         package_list.append(dp3)
+    # Space-time complexity of O(n)
     for lp3 in truck3.get_loaded_packages():
         package_list.append(lp3)
+
     return package_list
 
 

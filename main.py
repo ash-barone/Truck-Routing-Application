@@ -62,13 +62,6 @@ if __name__ == '__main__':
                     packages.hash_table.clear()
                     packages.create_package_lists()
 
-                    '''for i in range(len(packages.hash_table.table) + 1):
-                        package_to_reset = packages.hash_table.search(i)
-                        package_to_reset.reset_delivery_status()'''
-
-                    '''set_time_hour = int(input("Please enter a specific hour: "))
-                    set_time_minute = int(input("Please enter a specific minute: "))
-                    set_time = datetime.now().replace(hour=set_time_hour, minute=set_time_minute, second=0)'''
                     # print("SET TIME: ")
                     # print(set_time)
 
@@ -147,23 +140,6 @@ if __name__ == '__main__':
                     if len(truck2.delivered_packages) == 0 and truck2.miles_traveled == 0:
                         truck2.update_delivery_status("hub")
 
-                    # truck trip 2
-                    '''print("Truck 2 Trip 2:\n")
-                    truck2.set_departure_time(datetime.now().replace(hour=10, minute=44, second=0))
-                    if set_time >= datetime.now().replace(hour=10, minute=44, second=0):
-                        truck2.load_packages(2, package.truck2_packages_trip2, set_time)
-                        truck2_trip2_alg_results = util.find_shortest_distance(truck2.curr_location,
-                                                                               truck2.loaded_packages)
-                        truck2.deliver_packages(set_time,
-                                                truck2_trip2_alg_results[0],
-                                                truck2_trip2_alg_results[1])
-                    # truck2.return_truck()
-                    print("\nTruck 2 Current Location and Miles Traveled: ")
-                    print(truck2.curr_location)
-                    print("Miles traveled: ")
-                    print(truck2.get_miles_traveled())
-                    print("\n")'''
-
                     # truck 3 trip
                     print("Truck 3:")
                     truck3.deliver_packages(set_time, truck3_alg_results[0],
@@ -210,16 +186,6 @@ if __name__ == '__main__':
                         if "at hub " in search_result:
                             print(t3p)
                             found_package = True
-                    '''for i in range(len(packages.hash_table.table) + 1):
-                        search_result = str(packages.hash_table.search(i))
-                        if at_hub_string in search_result:
-                            print(packages.hash_table.search(i))
-                            found_package = True'''
-                    '''if p not in truck1.get_delivered_packages() and p not in truck1.get_loaded_packages() \
-                                and p not in truck2.get_delivered_packages() and p not in truck2.get_loaded_packages() \
-                                and p not in truck3.get_delivered_packages() and p not in truck3.get_loaded_packages()\
-                                and p is not None:
-                            print(p)'''
 
                     print("\nTOTAL MILES TRAVELED: ")
                     print(truck1.get_miles_traveled() + truck2.get_miles_traveled() + truck3.get_miles_traveled())

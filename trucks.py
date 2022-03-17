@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-import main
 import packages
 from util import distance_graph
 
@@ -60,9 +59,15 @@ class Truck:
         return self.delivered_packages
 
     def get_delivered_and_loaded_packages(self):
+        """
+        Get the combined list of delivered and loaded packages
+        :return:
+        """
         delivered_and_loaded_packages_list = []
+        # Space-time complexity of O(n)
         for p in self.get_loaded_packages():
             delivered_and_loaded_packages_list.append(p)
+        # Space-time complexity of O(n)
         for pp in self.get_delivered_packages():
             delivered_and_loaded_packages_list.append(pp)
 
@@ -160,7 +165,6 @@ class Truck:
                 # checks if elapsed time goes past the set time to tell method to stop
                 if (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) <= set_time \
                         and delivered_package_success:
-                    #print("WHY THO")
                     self.curr_time += timedelta(seconds=time_elapsed_in_seconds)
                     # print(self.curr_time + timedelta(seconds=time_elapsed_in_seconds))
                     self.miles_traveled += distance_list[i]  # add distance to the miles traveled
@@ -185,7 +189,6 @@ class Truck:
                             delivered_package_success = True
                             # count += 1
                 elif (self.curr_time + timedelta(seconds=time_elapsed_in_seconds)) >= set_time:
-                    #print("PLS?")
                     self.curr_location = "In transit to next delivery"
                     temp_time = set_time - self.curr_time
                     # print(temp_time)

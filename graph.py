@@ -4,6 +4,10 @@ import pprint
 
 class Graph:
     def __init__(self):
+        """
+        Initializes the graph structure to have an adjacency list for storing node and an edge weights list
+        for storing edges with weights.
+        """
         self.adjacency_list = {}
         self.edge_weights = {}
 

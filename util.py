@@ -18,6 +18,7 @@ def load_address_data(file_name, graph):
         address_line = next(distance_data)
         # print("address line: " + str(address_line))
 
+        # Space-time complexity of O(n^2)
         for row in distance_data:
             start_address = row[0]
             # print("start address: " + start_address)
@@ -43,11 +44,12 @@ def create_address_graph():
 
 def find_shortest_distance(truck_location, package_list):
     """
-    Greedy algorithm sorting method used to determine the order in which to deliver the packages. The algorithm uses an
-    outer for loop which keeps track of where to begin looping through the list of packages and an inner for loop which
-    loops through that list of packages using the start point from the outer loop. The algorithm then compares distances
-    to move the shortest distance to the top of the list. The greedy algorithm provides an in-the-moment optimized list
-    since it only considers what is optimal at the exact moment it is comparing distances.
+    Greedy algorithm shortest path method used to determine the order in which to deliver the packages. The algorithm
+    uses an outer for loop which keeps track of where to begin looping through the list of packages and an inner for
+    loop which loops through that list of packages using the start point from the outer loop. The algorithm then
+    compares distances to store the shortest distance per iteration in a separate list. The greedy algorithm provides
+    an in-the-moment optimized list since it only considers what is optimal at the exact moment it is comparing
+    distance between the start point determined in the outer loop to the next point in the inner loop.
     Time complexity of O(n^2) since there are two for loops running through n times. The algorithm has a space
     complexity of O(n) since only the inner for loop uses an n amount of space with the outer loop only keeping the
     sort's place in the list.
@@ -63,6 +65,7 @@ def find_shortest_distance(truck_location, package_list):
     total_distance = 0
 
     # runs the count of package list length as a placeholder
+    # Space-time complexity of O(n^2)
     for j in range(0, len(package_list)):
         shortest_distance = 9999
         # runs through the contents of package list to compare distances and find the lowest distance
@@ -107,6 +110,7 @@ def find_shortest_distance(truck_location, package_list):
     distance_list.append(distance_graph.search(curr_location, starting_location))
 
     # run through the distances and add them up for total distance
+    # Space-time complexity of O(n)
     for shortest_distance in distance_list:
         total_distance += shortest_distance
 
